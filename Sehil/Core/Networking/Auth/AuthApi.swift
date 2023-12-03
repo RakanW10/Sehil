@@ -15,6 +15,7 @@ enum AuthErrors: Error {
 
 protocol AuthApiProtocol {
     func signUp(email: String, password: String) async throws -> UUID
+    func signIn(email: String, password: String) async throws -> UUID
     func isEmailTaken(email: String) async -> Bool
 }
 
@@ -25,13 +26,23 @@ class AuthApi: AuthApiProtocol {
         self.client = client
     }
 
-    func signUp(email: String, password: String) async throws -> UUID  {
+    func signUp(email: String, password: String) async throws -> UUID {
         do {
             let authResponse = try await client.auth.signUp(email: email, password: password)
             return (authResponse.session?.user.id)!
-        } catch {            
+        } catch {
             print("AuthApi-signUp: \(error)")
             throw AuthErrors.signUpError
+        }
+    }
+
+    func signIn(email: String, password: String) async throws -> UUID {
+        do {
+            let session = try await client.auth.signIn(email: email, password: password)
+            return session.user.id
+        } catch {
+            print("AuthApi-signIn: \(error)")
+            throw AuthErrors.signInError
         }
     }
 
@@ -43,9 +54,8 @@ class AuthApi: AuthApiProtocol {
                 return true
             }
         } catch {
-            print("AuthApi-isEmailTaken:",error)
+            print("AuthApi-isEmailTaken:", error)
         }
         return false
     }
-    
 }

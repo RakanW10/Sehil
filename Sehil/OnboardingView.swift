@@ -59,11 +59,12 @@ struct OnboardingView: View {
                     .frame(height: 8)
                 HStack(spacing: 0) {
                     Text("Have an account already?")
-                    Text("Login")
-                        .foregroundStyle(Color(.primary))
-                        .onTapGesture {
-                            // TODO: Go to login page
-                        }
+                    NavigationLink {
+                        SignInView()
+                    } label: {
+                        Text("Login")
+                            .foregroundStyle(Color(.primary))
+                    }
                 }
                 .foregroundStyle(.gray)
                 .font(.footnote)
