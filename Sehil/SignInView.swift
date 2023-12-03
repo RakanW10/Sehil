@@ -40,7 +40,7 @@ struct SignInView: View {
                 Spacer()
                 NavigationAsyncButton(isFill: true, title: "Sign in", isActive: $vm.goToHome, isLoading: $vm.isSignInLoading, action: vm.signIn
                     , destination: {
-                    Text(vm.userId?.description.lowercased() ?? "empty")
+                    RootView(vm: RootViewModel(userId: vm.userId))
                         //TODO: HomeView(HomeViewModel(forUser: id))
                     })
                     .padding(.horizontal, 32)
