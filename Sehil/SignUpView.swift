@@ -30,23 +30,32 @@ struct SignUpView: View {
                 AuthTextField(placeholder: "Email", keyboardType: .emailAddress, text: $vm.emailTextField, isLoading: $vm.isEmailLoading) {
                     await vm.emailValidator(email: vm.emailTextField)
                 }
-                
+
                 AuthTextField(placeholder: "Password", isSecure: true, text: $vm.passwordTextField, isLoading: .constant(false)) {
                     vm.passwordValidator(password: vm.passwordTextField)
                 }
             } //: VStack
         } //: ScrollView
+
+        // MARK: - SignUp Button
+
         .overlay {
             VStack {
                 Spacer()
-                MainButton(isFill: true, title: "Sign up") {
-                    Task {
-                        await vm.signUp()
-                    }
-                }
-                .padding(32)
+                NavigationAsyncButton(
+                    isFill: true,
+                    title: "Sign up",
+                    isActive: $vm.goToRootView,
+                    isLoading: $vm.isSignUpLoading,
+                    action: vm.signUp,
+                    destination: { RootView(vm: RootViewModel(appUser: vm.appUser)) }
+                )
             }
+            .padding(32)
         }
+
+        // MARK: - Data Sheet
+
         .sheet(isPresented: $isDatePickerShowing, content: {
             DatePicker("TestTitle", selection: $vm.dateOfBirth, displayedComponents: .date)
                 .padding()
@@ -64,6 +73,9 @@ struct SignUpView: View {
                 }
 
         })
+
+        // MARK: - Toolbar
+
         .navigationBarBackButtonHidden(true)
         .toolbar(content: {
             ToolbarItem(placement: .topBarLeading) {

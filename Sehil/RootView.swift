@@ -29,10 +29,12 @@ struct RootView: View {
                 },
 
                 // MARK: - Main Content
-
+                
                 content: {
                     TabView {
-                        HomeView(isDrawerOpened: $vm.isDrawerOpened)
+                        HomeView(
+                            vm: HomeViewModel(appUser: vm.appUser)
+                            , isDrawerOpened: $vm.isDrawerOpened)
                             .tabItem {
                                 Image(systemName: "house")
                             }
@@ -49,7 +51,3 @@ struct RootView: View {
         .navigationBarBackButtonHidden()
     }
 }
-
-#Preview(body: {
-    RootView(vm: RootViewModel(userId: UUID()))
-})

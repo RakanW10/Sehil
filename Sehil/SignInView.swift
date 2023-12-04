@@ -22,28 +22,30 @@ struct SignInView: View {
                 AuthTextField(placeholder: "Email", text: $vm.emailTextField, isLoading: $vm.isEmailLoading) {
                     await vm.emailValidator(email: vm.emailTextField)
                 }
-                
+
                 AuthTextField(placeholder: "Password", isSecure: true, text: $vm.passwordTextField, isLoading: .constant(false))
                 Button(action: {
-                    //TODO: Forgot Password
+                    // TODO: Forgot Password
                 }, label: {
                     Text("Forgot password?")
                         .foregroundStyle(.gray)
                         .frame(maxWidth: .infinity, alignment: .leading)
                 })
                 .padding(.horizontal, 32)
-                
             }
         }
         .overlay(content: {
             VStack {
                 Spacer()
-                NavigationAsyncButton(isFill: true, title: "Sign in", isActive: $vm.goToHome, isLoading: $vm.isSignInLoading, action: vm.signIn
-                    , destination: {
-                    RootView(vm: RootViewModel(userId: vm.userId))
-                        //TODO: HomeView(HomeViewModel(forUser: id))
-                    })
-                    .padding(.horizontal, 32)
+                NavigationAsyncButton(
+                    isFill: true,
+                    title: "Sign in",
+                    isActive: $vm.goToRootView,
+                    isLoading: $vm.isSignInLoading,
+                    action: vm.signIn,
+                    destination: { RootView(vm: RootViewModel(appUser: vm.appUser)) }
+                )
+                .padding(.horizontal, 32)
             }
         })
         .navigationBarBackButtonHidden(true)

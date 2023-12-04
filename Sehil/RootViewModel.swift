@@ -9,9 +9,9 @@ import Foundation
 
 class RootViewModel: ObservableObject{
     @Published var isDrawerOpened = false
-    let userId: UUID?
+    let appUser: AppUser?
     
-    init(userId: UUID?) {
-        self.userId = userId
+    init(appUser: AppUser?) {
+        self.appUser = appUser
     }
 }

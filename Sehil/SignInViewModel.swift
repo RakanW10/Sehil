@@ -12,9 +12,10 @@ class SignInViewModel: ObservableObject{
     @Published var passwordTextField: String = "qwer4321"
     @Published var isEmailLoading: Bool = false
     @Published var isSignInLoading: Bool = false
-    @Published var goToHome: Bool = false
-    @Published var userId: UUID? = nil
+    @Published var goToRootView: Bool = false
+    @Published var appUser: AppUser? = nil
     private let authApi: AuthApiProtocol = AuthApi(client: Shared.client)
+    private let databaseApi: DatabaseApiProtocol = DatabaseApi(client: Shared.client)
     
     func signIn() {
         DispatchQueue.main.async {
@@ -24,10 +25,11 @@ class SignInViewModel: ObservableObject{
             if await emailValidator(email: emailTextField).0 {
                 do {
                     let uuid = try await authApi.signIn(email: emailTextField, password: passwordTextField)
+                    let appUser = try await databaseApi.getUser(userId: uuid)
                     DispatchQueue.main.async {
                         self.isSignInLoading = false
-                        self.userId = uuid
-                        self.goToHome = true
+                        self.appUser = appUser
+                        self.goToRootView = true
                     }
                 } catch {
                     print("SignInViewModel-signIn: \(error)")

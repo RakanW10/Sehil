@@ -14,19 +14,30 @@ class SignUpViewModel: ObservableObject {
     @Published var passwordTextField: String = ""
     @Published var dateOfBirthTextField: String = ""
     @Published var isEmailLoading: Bool = false
+    @Published var isSignUpLoading: Bool = false
+    @Published var goToRootView: Bool = false
     @Published var dateOfBirth: Date = Date.now
+    @Published var appUser: AppUser? = nil
     private let authApi: AuthApiProtocol = AuthApi(client: Shared.client)
     private let databaseApi: DatabaseApiProtocol = DatabaseApi(client: Shared.client)
 
-    func signUp() async {
-        if await isFormValid() {
-            do {
-                let userUuid = try await authApi.signUp(email: emailTextField, password: passwordTextField)
-                try await databaseApi.addNewUser(user: AppUser(id: userUuid, name: nameTextField, email: emailTextField.lowercased(), dateOfBirth: dateOfBirth, createdAt: Date.now))
-                // TODO: Goto Home and pass user data
-            } catch {
-                // TODO: handle error
-                print("SignUpViewModel-signUp: \(error)")
+    func signUp() {
+        self.isSignUpLoading = true
+        Task{
+            if await isFormValid() {
+                do {
+                    let userUuid = try await authApi.signUp(email: emailTextField, password: passwordTextField)
+                    let tempAppUser = AppUser(id: userUuid, name: nameTextField, email: emailTextField.lowercased(), dateOfBirth: dateOfBirth, createdAt: Date.now)
+                    try await databaseApi.addNewUser(user: tempAppUser)
+                    DispatchQueue.main.async {
+                        self.isSignUpLoading = false
+                        self.appUser = tempAppUser
+                        self.goToRootView = true
+                    }
+                } catch {
+                    // TODO: handle error
+                    print("SignUpViewModel-signUp: \(error)")
+                }
             }
         }
     }
